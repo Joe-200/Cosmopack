@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="excelApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmopack</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+     <img src="CP-logo 1.png" alt="Logo" class="logo">
+        
+        </div>
+
+
+
+
+        <div id="QurivWatermark">
+            Powered by Quriv
+        </div>
+        
+        <input type="text" placeholder="البحث" ng-model="searchText" class="search-box">
+
+        <div class="column-visibility-controls">
+           
+            <label ng-repeat="header in headers">
+                <input type="checkbox" ng-model="columnVisibility[header]"> {{ header }}
+            </label>
+        </div>
+
+        
+<div class="table-wrapper">
+    <table class="excel-table">
+        <tr>
+            <th ng-repeat="header in headers" ng-show="isColumnVisible(header)">{{ header }}</th>
+            <th>تاريخ التعديلات</th>
+            <th ng-if="anyBelowThreshold()">تنبيه</th>
+        </tr>
+        <tr ng-repeat="row in tableData | filter:customFilter" ng-class="{'stock-warning': isBelowThreshold(row)}">
+            <td ng-repeat="(key, value) in row track by $index" ng-show="isColumnVisible(headers[$index])"
+                contenteditable="true" ng-blur="showConfirmationModal(row, key, $event)">
+                <span ng-if="key !== 'Threshold'">{{ value }}</span>
+                <input style="width: 70px;" ng-if="key === 'Threshold'" type="number" ng-model="row.Threshold" placeholder="ضع الحد الادني" />
+            </td>
+            <td>
+                <button class="edit-history-btn" ng-click="viewEditHistory(row)">تاريخ التعديلات</button>
+            </td>
+            <td ng-if="isBelowThreshold(row)">
+                <button class="alert-btn" ng-click="showAlert(row)">تنبيه</button>
+            </td>
+        </tr>
+    </table>
+</div>
+            
+            
+        <div class="controls">
+            <button ng-click="saveData()">إحفظ</button>
+        </div>
+       
+    </div>
+    <div class="custom-modal edit-confirmation-modal" ng-show="showModal">
+        <div class="custom-modal-content">
+            <p> تأكيد اجراء التعديل ؟</p>
+            <button id="modalbtn" ng-click="confirmYes()">نعم</button>
+            <button id="modalbtn" ng-click="confirmNo()">لا</button>
+        </div>
+    </div>
+    <div class="custom-modal history-modal" ng-show="showHistoryModal" ng-click="closeHistoryOnClick($event)">
+        <div class="custom-modal-content">
+            <h3>تاريخ التعديلات</h3>
+            <ul class="edit-history-list">
+                <li class="edit-history-item" ng-repeat="edit in selectedRowEditHistory">
+                    <p>
+                        Column : {{ edit.column }}<br>
+                        Date & Time : {{ edit.date }}<br>
+                        Before : {{ edit.before }}<br>
+                        After : {{ edit.after }}
+                    </p>
+                </li>
+            </ul>
+            <center><button id="modalbtn" ng-click="closeHistory()">أغلق</button></center>
+        </div>
+    </div>
+    
+    </div>
+
+
+
+
+
+
+
+    <div ng-if="showAlertModal" class="custom-alert-modal">
+        <div class="alert-modal-content">
+            <span class="close-alert-btn" ng-click="closeAlert()">×</span>
+            <p>تنبيه انخفض المخزون عن {{ alertContext.stock }}</p>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

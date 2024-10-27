@@ -1,0 +1,29 @@
+
+
+<div class="login-screen">
+    
+    <div class="login-container">
+        <img src="images\logo.png" alt="Logo" class="logo">
+        <h1 style="float: right; margin-right:70px;margin-top: 15px;">Cosmopack</h1>
+      
+        <form ng-submit="login()">
+            <div class="form-group">
+            
+                <input type="text" id="username"   placeholder="اسم المستخدم"  ng-model="username" required>
+            </div>
+            <div class="form-group">
+              
+                <input type="password" id="password"  placeholder="كلمة المرور"  ng-model="password" required>
+            </div>
+            <button type="submit">تسجيل الدخول</button>
+        </form>
+        <div class="login-error" ng-show="loginError">
+            {{loginErrorMessage}}
+        </div>
+    </div>
+    <div class="footer-text">
+        Powered by Quriv
+    </div>
+
+
+</div>
