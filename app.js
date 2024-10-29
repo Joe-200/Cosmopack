@@ -58,8 +58,8 @@ app.controller('TableController', function($scope) {
     }, {});
 
     $scope.tableData = [
-        { "عدد كل كرتونة": "Data 1-1", "رصيد حالي": "5", "هالك": "Data 1-3", "مرتجع": "Data 1-4", "منصرف": "Data 1-5", "وارد": "Data 1-6", "اسم": "Data 1-7", "كود": "Data 1-8", "الحد الادني": 10 },
-        { "عدد كل كرتونة": "Data 2-1", "رصيد حالي": "4", "هالك": "Data 2-3", "مرتجع": "Data 2-4", "منصرف": "Data 2-5", "وارد": "Data 2-6", "اسم": "Data 2-7", "كود": "Data 2-8", "الحد الادني": 6 },
+        { "عدد كل كرتونة": "Data 1-1", "رصيد حالي": "19", "هالك": "Data 1-3", "مرتجع": "Data 1-4", "منصرف": "Data 1-5", "وارد": "Data 1-6", "اسم": "Data 1-7", "كود": "Data 1-8", "الحد الادني": 10 },
+        { "عدد كل كرتونة": "Data 2-1", "رصيد حالي": "9", "هالك": "Data 2-3", "مرتجع": "Data 2-4", "منصرف": "Data 2-5", "وارد": "Data 2-6", "اسم": "Data 2-7", "كود": "Data 2-8", "الحد الادني": 6 }
         // Add more data rows as needed...
     ];
 
@@ -97,6 +97,15 @@ app.controller('TableController', function($scope) {
         $scope.alertContext = {};
     };
 
+    // Function to update "رصيد حالي" for a specific row
+    $scope.updateCurrentBalance = function(row) {
+        const وارد = parseInt(row["وارد"]) || 0;
+        const منصرف = parseInt(row["منصرف"]) || 0;
+        const مرتجع = parseInt(row["مرتجع"]) || 0;
+        const هالك = parseInt(row["هالك"]) || 0;
+        row["رصيد حالي"] = وارد - (منصرف + مرتجع + هالك);
+    };
+
     // Show confirmation modal for edit
     $scope.showConfirmationModal = function(row, key, event) {
         const newValue = event.target.innerText.trim();
@@ -118,25 +127,27 @@ app.controller('TableController', function($scope) {
                 date: new Date().toLocaleString(),
                 before: $scope.editContext.previousValue,
                 after: $scope.editContext.newValue,
-                column: $scope.editContext.key // Store the column name
+                column: $scope.editContext.key
             };
-    
+
             // Ensure a history array exists for this row
             if (!$scope.editHistories[rowKey]) {
                 $scope.editHistories[rowKey] = [];
             }
-    
+
             // Add the edit to the history list for this row
             $scope.editHistories[rowKey].push(edit);
-            
+
             // Apply the new value to the row data
             $scope.editContext.row[$scope.editContext.key] = $scope.editContext.newValue;
+
+            // Update the current balance for this specific row
+            $scope.updateCurrentBalance($scope.editContext.row);
         }
-    
+
         $scope.showModal = false;
         $scope.editContext = {};
     };
-    
 
     $scope.confirmNo = function() {
         $scope.showModal = false;
